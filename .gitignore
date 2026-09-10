@@ -216,3 +216,6 @@ __marimo__/
 
 # Streamlit
 .streamlit/secrets.toml
+
+lab-02-azure-services/*.png
+lab-02-azure-services/00_stage1_screenshots.ipynb
