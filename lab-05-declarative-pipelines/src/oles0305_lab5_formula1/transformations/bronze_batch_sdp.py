@@ -1,5 +1,6 @@
 from pyspark import pipelines as dp
 from pyspark.sql import functions as F
+from pyspark.sql import DataFrame
 import ast
 
 
@@ -17,10 +18,10 @@ def ingest_to_bronze(table_name):
     table_landing_path = f"{landing_path}/{table_name}"
     
     @dp.table(
-        name=f"{CATALOG}.{bronze_schema}.{table_name}_sdp",
+        name=f"{bronze_schema}.{table_name}_sdp",
         comment=f"Raw {table_name} data from Landing zone"
     )
-    def create_table():
+    def create_table() -> DataFrame:
         return (
             spark.readStream.format("cloudFiles")
                 .option("cloudFiles.format", "csv")
