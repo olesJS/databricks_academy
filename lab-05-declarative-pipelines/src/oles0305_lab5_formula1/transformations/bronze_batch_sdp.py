@@ -26,9 +26,10 @@ def ingest_to_bronze(table_name):
             spark.readStream.format("cloudFiles")
                 .option("cloudFiles.format", "csv")
                 .option("header", "true")
+                .option("nullValue", r"\N")
                 .load(table_landing_path)
-                .withColumn("ingested_at", F.current_timestamp())
-                .withColumn("source_file", F.col("_metadata.file_path"))
+                .withColumn("_ingested_at", F.current_timestamp())
+                .withColumn("_source_file", F.col("_metadata.file_path"))
         )
 
 

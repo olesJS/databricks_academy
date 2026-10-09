@@ -44,10 +44,10 @@ def bronze_results() -> DataFrame:
     return (
         df_raw.select(
             F.col("value").cast("string").alias("raw_json"),
-            F.col("topic").alias("evh_name"),
-            F.col("partition").alias("evh_partition"),
-            F.col("offset").alias("evh_offset"),
-            F.col("timestamp").alias("evh_timestamp"),
-            F.current_timestamp().alias("ingested_at")
+            F.col("topic").alias("_evh_name"),
+            F.col("partition").alias("_evh_partition"),
+            F.col("offset").alias("_evh_offset"),
+            F.col("timestamp").alias("_evh_timestamp"),
+            F.current_timestamp().alias("_ingested_at")
         )
     )
