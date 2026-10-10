@@ -10,7 +10,6 @@ bronze_schema = f"{LOGIN}_bronze"
 silver_schema = f"{LOGIN}_silver"
 
 
-# SCD Type 2
 @dp.table(
     name=f"{CATALOG}.{silver_schema}.drivers_silver_prepared",
     comment="Streaming Table to prepare Drivers before ingestion to Silver"

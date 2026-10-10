@@ -19,7 +19,7 @@ def ingest_to_bronze(table_name):
     
     @dp.table(
         name=f"{bronze_schema}.{table_name}_sdp",
-        comment=f"Raw {table_name} data from Landing zone"
+        comment=f"Raw {table_name} data from Landing zone (with JSON values)"
     )
     def create_table() -> DataFrame:
         return (
