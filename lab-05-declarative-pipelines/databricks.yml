@@ -1,0 +1,12 @@
+bundle:
+  name: oles0305-lab05-f1
+
+include:
+  - resources/*.yml
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      profile: dev_trial

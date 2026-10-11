@@ -1,0 +1,16 @@
+resources:
+  pipelines:
+    pipeline_oles0305_lab5_formula:
+      name: oles0305_lab5_formula
+      catalog: dbr_dev_ua5816bd
+      configuration:
+        catalog_name: dbr_dev_ua5816bd
+        base_schema_name: oles0305
+        tables: '["circuits", "constructors", "drivers", "races"]'
+        event_hub_name: oles0305-ev-hub
+        event_hub_namespace: evhua5816bd
+        kv_scope: oles0305-kv-evh-scope
+        kv_conn_str_key: oles0305-evh-connection-str
+      libraries:
+        - glob:
+            include: ../src/pipelines/**
