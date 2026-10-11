@@ -11,28 +11,32 @@ bronze_schema = f"{LOGIN}_bronze"
 silver_schema = f"{LOGIN}_silver"
 
 
-def get_data_col(col_name):
-    return F.col(f"data.{col_name}").alias(col_name)
+def get_data_col(col_name, target_type=None):
+    col = F.col(f"data.{col_name}").alias(col_name)
+    if target_type:
+        return col.cast(target_type)
+    return col.alias(col_name)
+
 
 json_results_schema = StructType([
-    StructField("resultId", IntegerType()),
-    StructField("raceId", IntegerType()),
-    StructField("driverId", IntegerType()),
-    StructField("constructorId", IntegerType()),
+    StructField("resultId", StringType()),
+    StructField("raceId", StringType()),
+    StructField("driverId", StringType()),
+    StructField("constructorId", StringType()),
     StructField("number", StringType()),
-    StructField("grid", IntegerType()),
-    StructField("position", IntegerType()),
+    StructField("grid", StringType()),
+    StructField("position", StringType()),
     StructField("positionText", StringType()),
     StructField("positionOrder", StringType()),
-    StructField("points", IntegerType()),
-    StructField("laps", IntegerType()),
+    StructField("points", StringType()),
+    StructField("laps", StringType()),
     StructField("time", StringType()),
-    StructField("milliseconds", LongType()),
-    StructField("fastestLap", IntegerType()),
+    StructField("milliseconds", StringType()),
+    StructField("fastestLap", StringType()),
     StructField("rank", StringType()),
     StructField("fastestLapTime", StringType()),
-    StructField("fastestLapSpeed", DoubleType()),
-    StructField("statusId", IntegerType()),
+    StructField("fastestLapSpeed", StringType()),
+    StructField("statusId", StringType()),
 ])
 
 
@@ -47,17 +51,17 @@ def silver_results() -> DataFrame:
         df_results_bronze
             .withColumn("data", F.from_json(F.col("raw_json"), schema=json_results_schema))
             .select(
-                get_data_col("resultId"),
-                get_data_col("raceId"),
-                get_data_col("driverId"),
-                get_data_col("constructorId"),
-                get_data_col("grid"),
-                get_data_col("position"),
-                get_data_col("positionOrder"),
-                get_data_col("points"),
-                get_data_col("laps"),
-                get_data_col("milliseconds"),
-                get_data_col("fastestLapSpeed"),
-                F.col("_ingested_at")
+                get_data_col("resultId", IntegerType()),
+                get_data_col("raceId", IntegerType()),
+                get_data_col("driverId", IntegerType()),
+                get_data_col("constructorId", IntegerType()),
+                get_data_col("grid", IntegerType()),
+                get_data_col("position", IntegerType()),
+                get_data_col("positionOrder", StringType()),
+                get_data_col("points", IntegerType()),
+                get_data_col("laps", IntegerType()),
+                get_data_col("milliseconds", LongType()),
+                get_data_col("fastestLapSpeed", DoubleType()),
+                F.col("_ingested_at"),
             )
     )
