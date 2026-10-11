@@ -2,15 +2,17 @@ resources:
   pipelines:
     pipeline_oles0305_lab5_formula:
       name: oles0305_lab5_formula
-      catalog: dbr_dev_ua5816bd
+      catalog: ${var.catalog_name}
+      target: ${var.schema_name}
+      serverless: true
       configuration:
-        catalog_name: dbr_dev_ua5816bd
-        base_schema_name: oles0305
+        catalog_name: ${var.catalog_name}
+        base_schema_name: ${var.schema_name}
         tables: '["circuits", "constructors", "drivers", "races"]'
-        event_hub_name: oles0305-ev-hub
-        event_hub_namespace: evhua5816bd
-        kv_scope: oles0305-kv-evh-scope
-        kv_conn_str_key: oles0305-evh-connection-str
+        event_hub_name: ${var.event_hub_name}
+        event_hub_namespace: ${var.event_hub_namespace}
+        kv_scope: ${var.kv_scope}
+        kv_conn_str_key: ${var.kv_conn_str_key}
       libraries:
         - glob:
             include: ../src/pipelines/**
