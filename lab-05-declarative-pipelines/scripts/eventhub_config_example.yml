@@ -1,0 +1,2 @@
+EVENTHUB_CONN_STR: "your_connection_string"
+EVENTHUB_NAME: "your_eventhub_name"

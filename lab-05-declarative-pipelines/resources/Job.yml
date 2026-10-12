@@ -1,0 +1,8 @@
+resources:
+  jobs:
+    job_oles0305_lab5_formula1:
+      name: oles0305_lab5_formula1
+      tasks:
+        - task_key: bronze_silver_pipeline
+          pipeline_task:
+            pipeline_id: ${resources.pipelines.pipeline_oles0305_lab5_formula.id}
