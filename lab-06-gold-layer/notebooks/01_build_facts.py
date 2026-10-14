@@ -1,5 +1,6 @@
 # Databricks notebook source
 from pyspark.sql import functions as F
+from pyspark.sql import Window
 
 # COMMAND ----------
 
@@ -22,6 +23,8 @@ GOLD = f"{CATALOG}.{gold_schema}"
 df_silver_results = spark.read.table(f"{SILVER}.results_sdp").alias("results")
 df_silver_races = spark.read.table(f"{SILVER}.races_sdp").alias("races")
 
+race_window = Window.partitionBy(F.col("results.raceId"))
+
 df_gold_results = (
     df_silver_results
         .join(
@@ -29,13 +32,19 @@ df_gold_results = (
             on=F.col("races.raceId") == F.col("results.raceId"),
             how="inner"
         )
+        # grid = 0 (pit lane start) is replaced with the slot after the last grid position of the race
+        .withColumn( 
+            "grid", 
+            F.when(F.col("results.grid") > 0, F.col("results.grid"))
+                .otherwise(F.max("results.grid").over(race_window) + 1)
+        )
         .select(
             F.col("results.resultId").alias("result_id"),
             F.col("results.raceId").alias("race_id"),
             F.col("results.driverId").alias("driver_id"),
             F.col("results.constructorId").alias("constructor_id"),
             F.col("races.circuitId").alias("circuit_id"),
-            F.col("results.grid"),
+            F.col("grid"),
             F.col("results.position"),
             F.col("results.positionOrder").alias("position_order"),
             F.col("results.points"),
