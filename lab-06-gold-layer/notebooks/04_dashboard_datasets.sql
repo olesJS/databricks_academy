@@ -30,7 +30,6 @@ SELECT a.constructor_id
     , a.wins
     , a.podiums
     , a.points_sum AS points
-    , c.constructor_ref
     , c.constructor_name
     , a.points_sum / NULLIF(SUM(a.points_sum) OVER (PARTITION BY a.season_year), 0) AS points_share
 FROM agg_constructor_season a
@@ -65,9 +64,11 @@ JOIN dim_driver d ON a.driver_id = d.driver_id AND d.is_current = 1
 -- COMMAND ----------
 
 SELECT
-    f.result_id, f.race_id, f.driver_id, f.constructor_id, f.circuit_id,
-    r.season_year, r.season_round, r.race_name, r.race_date,
-    d.driver_code,
+    r.season_year,
+    r.season_round,
+    r.race_name,
+    r.race_date,
+    driver_code,
     CONCAT_WS(' ', d.forename, d.surname) AS driver_name,
     co.constructor_name,
     ci.*,
@@ -99,7 +100,7 @@ JOIN dim_driver d ON f.driver_id = d.driver_id AND d.is_current = 1
 -- COMMAND ----------
 
 SELECT
-  COALESCE(d.driver_code, d.driver_ref) AS driver_code,
+  d.driver_code,
   CONCAT_WS(' ', d.forename, d.surname) AS driver_name,
   ci.country,
   ci.circuit_name,
