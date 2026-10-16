@@ -55,3 +55,13 @@ df_gold_results = (
 )
 
 df_gold_results.write.mode("overwrite").saveAsTable(f"{GOLD}.fact_results")
+
+# COMMAND ----------
+
+spark.sql(f"""
+    INSERT INTO {GOLD}.data_volume_log
+    SELECT 'fact_results'
+        , COUNT(*)
+        , current_timestamp()
+    FROM {GOLD}.fact_results
+""")

@@ -56,6 +56,7 @@ df_gold_circuits = (
         F.col("circuitId").alias("circuit_id"),
         F.col("circuitRef").alias("circuit_ref"),
         F.col("name").alias("circuit_name"),
+        F.col("country"),
         F.col("location"),
         F.col("lat"),
         F.col("lng"),
