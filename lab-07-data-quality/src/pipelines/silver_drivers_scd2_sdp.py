@@ -1,7 +1,7 @@
 from pyspark import pipelines as dp
 from pyspark.sql import functions as F
-from pyspark.sql.types import IntegerType, DoubleType
 
+from f1_pipeline.transforms.silver import transform_drivers
 
 CATALOG = spark.conf.get("catalog_name")
 LOGIN = spark.conf.get("base_schema_name")
@@ -17,27 +17,15 @@ silver_schema = f"{LOGIN}_silver"
 @dp.expect_or_drop("validDriverId", "driverId IS NOT NULL")
 def drivers_silver_prepared():
     df_drivers_bronze = spark.readStream.table(f"{CATALOG}.{bronze_schema}.drivers_sdp")
+    return transform_drivers(df_drivers_bronze)
 
-    return (
-        df_drivers_bronze.select(
-            F.col("driverId").cast(IntegerType()),
-            F.col("driverRef"),
-            F.col("number").cast(IntegerType()),
-            F.col("code"),
-            F.col("forename"),
-            F.col("surname"),
-            F.to_date(F.col("dob"), "yyyy-MM-dd").alias("dateOfBirth"),
-            F.col("nationality"),
-            F.col("_source_file"),
-            F.col("_ingested_at"),
-        )
-    )
 
 dp.create_streaming_table(
     name=f"{CATALOG}.{silver_schema}.drivers_sdp",
     comment="Drivers in Silver layer",
     expect_all_or_drop={"validDriverId": "driverId IS NOT NULL"}
 )
+
 
 dp.create_auto_cdc_flow(
     target=f"{CATALOG}.{silver_schema}.drivers_sdp",

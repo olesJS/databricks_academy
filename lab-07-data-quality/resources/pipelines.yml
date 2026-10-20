@@ -15,4 +15,4 @@ resources:
         kv_conn_str_key: ${var.kv_conn_str_key}
       libraries:
         - glob:
-            include: ../pipelines/**
+            include: ../src/pipelines/**

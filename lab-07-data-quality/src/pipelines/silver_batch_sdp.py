@@ -1,8 +1,11 @@
 from pyspark import pipelines as dp
-from pyspark.sql import functions as F
 from pyspark.sql import DataFrame
-from pyspark.sql.types import IntegerType, DoubleType
 
+from f1_pipeline.transforms.silver import (
+    transform_circuits,
+    transform_constructors,
+    transform_races
+)
 
 CATALOG = spark.conf.get("catalog_name")
 LOGIN = spark.conf.get("base_schema_name")
@@ -19,21 +22,7 @@ silver_schema = f"{LOGIN}_silver"
 @dp.expect("validCoordinates", "(lat BETWEEN -90 AND 90) AND (lng BETWEEN -180 AND 180)")
 def silver_cirucits() -> DataFrame:
     df_circuits_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.circuits_sdp")
-
-    return (
-        df_circuits_bronze.select(
-            F.col("circuitId").cast(IntegerType()),
-            F.col("circuitRef"),
-            F.col("name"),
-            F.col("location"),
-            F.col("country"),
-            F.col("lat").cast(DoubleType()),
-            F.col("lng").cast(DoubleType()),
-            F.col("alt").cast(IntegerType()),
-            F.col("_source_file"),
-            F.col("_ingested_at"),
-        )
-    )
+    return transform_circuits(df_circuits_bronze)
     
 
 @dp.materialized_view(
@@ -43,17 +32,7 @@ def silver_cirucits() -> DataFrame:
 @dp.expect_or_drop("validConstructorId", "constructorId IS NOT NULL")
 def silver_constructors() -> DataFrame:
     df_constructors_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.constructors_sdp")
-
-    return (
-        df_constructors_bronze.select(
-            F.col("constructorId").cast(IntegerType()),
-            F.col("constructorRef"),
-            F.col("name"),
-            F.col("nationality"),
-            F.col("_source_file"),
-            F.col("_ingested_at"),
-        )
-    )
+    return transform_constructors(df_constructors_bronze)
 
 
 @dp.materialized_view(
@@ -63,17 +42,5 @@ def silver_constructors() -> DataFrame:
 @dp.expect_or_drop("validRaceId", "raceId IS NOT NULL")
 def silver_races() -> DataFrame:
     df_races_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.races_sdp")
+    return transform_races(df_races_bronze)
 
-    return (
-        df_races_bronze.select(
-            F.col("raceId").cast(IntegerType()),
-            F.col("year").cast(IntegerType()),
-            F.col("round").cast(IntegerType()),
-            F.col("circuitId").cast(IntegerType()),
-            F.col("name"),
-            F.to_date(F.col("date"), "yyyy-MM-dd").alias("date"),
-            F.to_date(F.col("time"), "HH:mm:ss").alias("time"),
-            F.col("_source_file"),
-            F.col("_ingested_at")
-        )
-    )
