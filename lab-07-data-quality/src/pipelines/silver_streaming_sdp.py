@@ -1,7 +1,7 @@
 from pyspark import pipelines as dp
 from pyspark.sql import DataFrame
 
-from f1_pipeline.transforms.silver import parse_results
+from f1_pipeline.transforms.silver import deduplicate_results, parse_results
 
 CATALOG = spark.conf.get("catalog_name")
 LOGIN = spark.conf.get("base_schema_name")
@@ -16,4 +16,4 @@ silver_schema = f"{LOGIN}_silver"
 )
 def silver_results() -> DataFrame:
     df_results_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.results_sdp")
-    return parse_results(df_results_bronze)
+    return deduplicate_results(parse_results(df_results_bronze))

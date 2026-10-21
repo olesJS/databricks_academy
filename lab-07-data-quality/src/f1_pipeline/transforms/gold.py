@@ -72,21 +72,23 @@ def build_dim_constructor(df: DataFrame) -> DataFrame:
 
 
 def build_dim_driver(df: DataFrame) -> DataFrame:
-    return df.select(
-        F.col("driverId").alias("driver_id"),
-        F.col("driverRef").alias("driver_ref"),
-        F.col("number").alias("driver_number"),
-        F.col("code").alias("driver_code"),
-        F.col("forename"),
-        F.col("surname"),
-        F.col("dateOfBirth").alias("date_of_birth"),
-        F.col("nationality").alias("driver_nationality"),
-        F.col("__START_AT").alias("valid_from"),
-        F.col("__END_AT").alias("valid_to")
-    )
-    .withColumn(
-        "is_current", 
-        F.when(F.col("valid_to").isNull(), 1).otherwise(0)
+    return (
+        df.select(
+            F.col("driverId").alias("driver_id"),
+            F.col("driverRef").alias("driver_ref"),
+            F.col("number").alias("driver_number"),
+            F.col("code").alias("driver_code"),
+            F.col("forename"),
+            F.col("surname"),
+            F.col("dateOfBirth").alias("date_of_birth"),
+            F.col("nationality").alias("driver_nationality"),
+            F.col("__START_AT").alias("valid_from"),
+            F.col("__END_AT").alias("valid_to")
+        )
+        .withColumn(
+            "is_current",
+            F.when(F.col("valid_to").isNull(), 1).otherwise(0)
+        )
     )
 
 
@@ -111,7 +113,7 @@ def _facts_with_season(df_results: DataFrame, df_races: DataFrame) -> DataFrame:
         df_results.alias("results")
             .join(
                 df_races.alias("races"),
-                on=F.col("race_id") == F.col("race_id"),
+                on=F.col("results.race_id") == F.col("races.race_id"),
                 how="inner"
             )
     )
