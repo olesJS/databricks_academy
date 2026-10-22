@@ -1,0 +1,20 @@
+resources:
+  jobs:
+    job_oles0305_lab7_unit_tests:
+      name: oles0305_lab7_unit_tests
+
+      tasks:
+        - task_key: pytest_unit
+          environment_key: tests_env
+          spark_python_task:
+            python_file: ../tests/run_unit_tests.py
+            parameters:
+              - ${workspace.file_path}
+
+      environments:
+        - environment_key: tests_env
+          spec:
+            environment_version: "6"
+            dependencies:
+              - pytest
+              - chispa

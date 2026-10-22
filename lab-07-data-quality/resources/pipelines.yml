@@ -1,6 +1,6 @@
 resources:
   pipelines:
-    pipeline_oles0305_f1_lab06:
+    pipeline_oles0305_f1_lab07:
       name: oles0305_silver_pipeline
       catalog: ${var.catalog_name}
       target: ${var.schema_name}

@@ -1,7 +1,7 @@
 resources:
   jobs:
-    job_oles0305_lab6_formula1:
-      name: oles0305_lab6_formula1
+    job_oles0305_lab7_formula1:
+      name: oles0305_lab7_formula1
 
       parameters:
         - name: catalog_name
@@ -14,20 +14,20 @@ resources:
       tasks:
         - task_key: bronze_silver_pipeline
           pipeline_task:
-            pipeline_id: ${resources.pipelines.pipeline_oles0305_f1_lab06.id}
+            pipeline_id: ${resources.pipelines.pipeline_oles0305_f1_lab07.id}
         - task_key: gold_facts_job
           depends_on:
             - task_key: bronze_silver_pipeline
           notebook_task:
-            notebook_path: ../notebooks/01_build_facts.py
+            notebook_path: ../src/notebooks/01_build_facts.py
         - task_key: gold_dims_job
           depends_on:
             - task_key: bronze_silver_pipeline
           notebook_task:
-            notebook_path: ../notebooks/02_build_dims.py
+            notebook_path: ../src/notebooks/02_build_dims.py
         - task_key: gold_aggs_job
           depends_on:
             - task_key: gold_facts_job
             - task_key: gold_dims_job
           notebook_task:
-            notebook_path: ../notebooks/03_build_aggs.py
+            notebook_path: ../src/notebooks/03_build_aggs.py
