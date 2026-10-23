@@ -7,6 +7,14 @@ from f1_pipeline.transforms.silver import (
     transform_races
 )
 
+from f1_pipeline.dq_rules import (
+    RACES_RULES,
+    CIRCUITS_RULES,
+    CIRCUITS_WARN,
+    CONSTRUCTORS_RULES
+)
+
+
 CATALOG = spark.conf.get("catalog_name")
 LOGIN = spark.conf.get("base_schema_name")
 
@@ -18,8 +26,8 @@ silver_schema = f"{LOGIN}_silver"
     name=f"{CATALOG}.{silver_schema}.circuits_sdp",
     comment="Circuits in Silver layer"
 )
-@dp.expect_or_drop("validCircuitId", "circuitId IS NOT NULL")
-@dp.expect("validCoordinates", "(lat BETWEEN -90 AND 90) AND (lng BETWEEN -180 AND 180)")
+@dp.expect_or_drop(CIRCUITS_RULES)
+@dp.expect(CIRCUITS_WARN)
 def silver_cirucits() -> DataFrame:
     df_circuits_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.circuits_sdp")
     return transform_circuits(df_circuits_bronze)
@@ -29,7 +37,7 @@ def silver_cirucits() -> DataFrame:
     name=f"{CATALOG}.{silver_schema}.constructors_sdp",
     comment="Constructors in Silver layer"
 )
-@dp.expect_or_drop("validConstructorId", "constructorId IS NOT NULL")
+@dp.expect_or_drop(CONSTRUCTORS_RULES)
 def silver_constructors() -> DataFrame:
     df_constructors_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.constructors_sdp")
     return transform_constructors(df_constructors_bronze)
@@ -39,7 +47,7 @@ def silver_constructors() -> DataFrame:
     name=f"{CATALOG}.{silver_schema}.races_sdp",
     comment="Races in Silver layer"
 )
-@dp.expect_or_drop("validRaceId", "raceId IS NOT NULL")
+@dp.expect_or_drop(RACES_RULES)
 def silver_races() -> DataFrame:
     df_races_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.races_sdp")
     return transform_races(df_races_bronze)
