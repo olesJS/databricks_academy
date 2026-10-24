@@ -4,14 +4,14 @@ from pyspark.sql import DataFrame
 from f1_pipeline.transforms.silver import (
     transform_circuits,
     transform_constructors,
-    transform_races
+    transform_races,
 )
 
 from f1_pipeline.dq_rules import (
     RACES_RULES,
     CIRCUITS_RULES,
     CIRCUITS_WARN,
-    CONSTRUCTORS_RULES
+    CONSTRUCTORS_RULES,
 )
 
 
@@ -26,8 +26,8 @@ silver_schema = f"{LOGIN}_silver"
     name=f"{CATALOG}.{silver_schema}.circuits_sdp",
     comment="Circuits in Silver layer"
 )
-@dp.expect_or_drop(CIRCUITS_RULES)
-@dp.expect(CIRCUITS_WARN)
+@dp.expect_all_or_drop(CIRCUITS_RULES)
+@dp.expect_all(CIRCUITS_WARN)
 def silver_cirucits() -> DataFrame:
     df_circuits_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.circuits_sdp")
     return transform_circuits(df_circuits_bronze)
@@ -37,7 +37,7 @@ def silver_cirucits() -> DataFrame:
     name=f"{CATALOG}.{silver_schema}.constructors_sdp",
     comment="Constructors in Silver layer"
 )
-@dp.expect_or_drop(CONSTRUCTORS_RULES)
+@dp.expect_all_or_drop(CONSTRUCTORS_RULES)
 def silver_constructors() -> DataFrame:
     df_constructors_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.constructors_sdp")
     return transform_constructors(df_constructors_bronze)
@@ -47,7 +47,7 @@ def silver_constructors() -> DataFrame:
     name=f"{CATALOG}.{silver_schema}.races_sdp",
     comment="Races in Silver layer"
 )
-@dp.expect_or_drop(RACES_RULES)
+@dp.expect_all_or_drop(RACES_RULES)
 def silver_races() -> DataFrame:
     df_races_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.races_sdp")
     return transform_races(df_races_bronze)

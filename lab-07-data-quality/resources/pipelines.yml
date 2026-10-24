@@ -5,6 +5,7 @@ resources:
       catalog: ${var.catalog_name}
       target: ${var.schema_name}
       serverless: true
+      root_path: ../src
       configuration:
         catalog_name: ${var.catalog_name}
         base_schema_name: ${var.schema_name}

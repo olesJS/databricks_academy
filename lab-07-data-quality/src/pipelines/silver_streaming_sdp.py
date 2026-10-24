@@ -14,7 +14,7 @@ silver_schema = f"{LOGIN}_silver"
 
 def _parsed_results() -> DataFrame:
     df_results_bronze = spark.read.table(f"{CATALOG}.{bronze_schema}.results_sdp")
-    return deduplicate_results(parse_results(df_results_bronze), keep_raw=True)
+    return deduplicate_results(parse_results(df_results_bronze, keep_raw=True))
 
 
 @dp.materialized_view(

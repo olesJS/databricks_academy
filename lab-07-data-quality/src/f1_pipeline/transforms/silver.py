@@ -94,7 +94,7 @@ def deduplicate_results(df: DataFrame) -> DataFrame:
 
 
 def parse_results(df: DataFrame, keep_raw: bool = False) -> DataFrame:
-    extra = F.col("raw_json") if keep_raw else []
+    extra = [F.col("raw_json")] if keep_raw else []
     return (
         df
         .withColumn("data", F.from_json(F.col("raw_json"), schema=RESULTS_JSON_SCHEMA))
