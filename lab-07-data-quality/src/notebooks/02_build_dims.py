@@ -3,6 +3,15 @@
 # [tool.databricks.environment]
 # environment_version = "6"
 # ///
+import sys
+
+dbutils.widgets.text("src_path", "", "Source path")
+_src = dbutils.widgets.get("src_path")
+if _src and _src not in sys.path:
+    sys.path.insert(0, _src)
+
+# COMMAND ----------
+
 from f1_pipeline.transforms.gold import (
     build_dim_race,
     build_dim_circuit,

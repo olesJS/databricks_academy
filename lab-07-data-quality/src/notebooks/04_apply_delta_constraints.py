@@ -1,11 +1,14 @@
 # Databricks notebook source
-import os
 import sys
-from f1_pipeline.dq.constraints import CONSTRAINTS, apply_constraints
+
+dbutils.widgets.text("src_path", "", "Source path")
+_src = dbutils.widgets.get("src_path")
+if _src and _src not in sys.path:
+    sys.path.insert(0, _src)
 
 # COMMAND ----------
 
-sys.path.append(os.path.abspath(".."))
+from f1_pipeline.dq.constraints import CONSTRAINTS, apply_constraints
 
 # COMMAND ----------
 

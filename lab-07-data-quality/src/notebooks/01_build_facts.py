@@ -1,4 +1,13 @@
 # Databricks notebook source
+import sys
+
+dbutils.widgets.text("src_path", "", "Source path")
+_src = dbutils.widgets.get("src_path")
+if _src and _src not in sys.path:
+    sys.path.insert(0, _src)
+
+# COMMAND ----------
+
 from f1_pipeline.transforms.gold import build_fact_results
 
 # COMMAND ----------
