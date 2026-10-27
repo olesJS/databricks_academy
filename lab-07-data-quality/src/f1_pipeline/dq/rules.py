@@ -43,9 +43,7 @@ def violation_condition(rules: dict) -> str:
 
 def add_failed_rules(df: DataFrame, rules: dict) -> DataFrame:
     df = df.where(F.expr(violation_condition(rules)))
-
     failed = F.array(*[
         F.when(F.coalesce(F.expr(rule), F.lit(False)), name) for name, rule in rules.items()
     ])
-
     return df.withColumn("_failed_rules", F.filter(failed, lambda x: x.isNotNull()))
