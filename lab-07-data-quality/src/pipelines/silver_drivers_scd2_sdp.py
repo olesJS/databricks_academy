@@ -1,5 +1,6 @@
 from pyspark import pipelines as dp
 from pyspark.sql import functions as F
+from pyspark.sql import DataFrame
 
 from f1_pipeline.transforms.silver import transform_drivers
 
@@ -18,6 +19,12 @@ silver_schema = f"{LOGIN}_silver"
 def drivers_silver_prepared():
     df_drivers_bronze = spark.readStream.table(f"{CATALOG}.{bronze_schema}.drivers_sdp")
     return transform_drivers(df_drivers_bronze)
+
+
+@dp.materialized_view(name=f"{CATALOG}.{silver_schema}.drivers_quarantine_sdp")
+def silver_drivers_quarantine() -> DataFrame:
+    df_drivers_bronze = transform_drivers(spark.read.table(f"{CATALOG}.{bronze_schema}.drivers_sdp"))
+    return df_drivers_bronze.where(F.col("driverId").isNull())
 
 
 dp.create_streaming_table(
