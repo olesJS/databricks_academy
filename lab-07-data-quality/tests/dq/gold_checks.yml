@@ -1,0 +1,87 @@
+fact_results:
+  - criticality: error
+    check:
+      function: is_not_null
+      for_each_column:
+        - result_id
+        - race_id
+        - driver_id
+        - constructor_id
+        - circuit_id
+        - grid
+        - points
+  - criticality: error
+    check:
+      function: is_unique
+      arguments:
+        columns: [result_id]
+  - criticality: error
+    check:
+      function: is_unique
+      arguments:
+        columns: [driver_id, race_id]
+  - criticality: error
+    check:
+      function: is_not_less_than
+      arguments: {column: grid, limit: 1}
+  - criticality: error
+    check:
+      function: is_not_less_than
+      arguments: {column: points, limit: 0}
+
+dim_driver:
+  - criticality: error
+    check:
+      function: is_unique
+      arguments:
+        columns: [driver_id, valid_from]
+  - criticality: error
+    check:
+      function: is_in_list
+      arguments:
+        column: is_current
+        allowed: [0, 1]
+
+dim_race:
+  - criticality: error
+    check:
+      function: is_unique
+      arguments:
+        columns: [race_id]
+
+dim_circuit:
+  - criticality: error
+    check:
+      function: is_unique
+      arguments:
+        columns: [circuit_id]
+  - criticality: warn
+    check:
+      function: is_latitude
+      arguments:
+        column: lat
+  - criticality: warn
+    check:
+      function: is_longitude
+      arguments:
+        column: lng
+
+dim_constructor:
+  - criticality: error
+    check:
+      function: is_unique
+      arguments:
+        columns: [constructor_id]
+  - criticality: error
+    check:
+      function: is_not_null
+      arguments:
+        column: constructor_name
+
+agg_driver_season:
+  - criticality: error
+    name: wins_not_above_races
+    check:
+      function: sql_expression
+      arguments:
+        expression: "wins <= races_count"

@@ -1,0 +1,19 @@
+resources:
+  pipelines:
+    pipeline_oles0305_f1_lab07:
+      name: oles0305_silver_pipeline
+      catalog: ${var.catalog_name}
+      target: ${var.schema_name}
+      serverless: true
+      root_path: ../src
+      configuration:
+        catalog_name: ${var.catalog_name}
+        base_schema_name: ${var.schema_name}
+        tables: '["circuits", "constructors", "drivers", "races"]'
+        event_hub_name: ${var.event_hub_name}
+        event_hub_namespace: ${var.event_hub_namespace}
+        kv_scope: ${var.kv_scope}
+        kv_conn_str_key: ${var.kv_conn_str_key}
+      libraries:
+        - glob:
+            include: ../src/pipelines/**

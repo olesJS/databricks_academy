@@ -1,0 +1,26 @@
+bundle:
+  name: oles0305-lab07-f1
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog_name:
+    default: dbr_dev_ua5816bd
+  schema_name:
+    default: oles0305
+  event_hub_name:
+    default: oles0305-ev-hub
+  event_hub_namespace:
+    default: evhua5816bd
+  kv_scope:
+    default: oles0305-kv-evh-scope
+  kv_conn_str_key:
+    default: oles0305-evh-connection-str
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      profile: dev_trial_3
