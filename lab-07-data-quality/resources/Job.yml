@@ -18,21 +18,15 @@ resources:
           pipeline_task:
             pipeline_id: ${resources.pipelines.pipeline_oles0305_f1_lab07.id}
 
-        - task_key: apply_constraints
-          depends_on:
-            - task_key: bronze_silver_pipeline
-          notebook_task:
-            notebook_path: ../src/notebooks/04_apply_delta_constraints.py
-
         - task_key: gold_facts_job
           depends_on:
-            - task_key: apply_constraints
+            - task_key: bronze_silver_pipeline
           notebook_task:
             notebook_path: ../src/notebooks/01_build_facts.py
 
         - task_key: gold_dims_job
           depends_on:
-            - task_key: apply_constraints
+            - task_key: bronze_silver_pipeline
           notebook_task:
             notebook_path: ../src/notebooks/02_build_dims.py
 
