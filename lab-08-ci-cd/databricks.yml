@@ -25,7 +25,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-7405604651938730.10.azuredatabricks.net
+      host: https://adb-7405604651938730.10.azuredatabricks.net  # dbr_dev
     variables:
       catalog_name: dbr_dev_ua5816bd
       schema_name: oles0305
@@ -34,4 +34,5 @@ targets:
       kv_scope: oles0305-kv-evh-scope
       kv_conn_str_key: oles0305-evh-connection-str
       alert_email: oles0305@gmail.com
+
 
