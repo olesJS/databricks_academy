@@ -1,0 +1,37 @@
+bundle:
+  name: oles0305-lab08-f1
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog_name:
+  schema_name:
+    description: Base schema prefix (login)
+  event_hub_name:
+  event_hub_namespace:
+  kv_scope:
+  kv_conn_str_key:
+  alert_email:
+
+artifacts:
+  f1_wheel:
+    type: whl
+    build: python -m build --wheel
+    path: .
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405604651938730.10.azuredatabricks.net
+    variables:
+      catalog_name: dbr_dev_ua5816bd
+      schema_name: oles0305
+      event_hub_name: oles0305-ev-hub
+      event_hub_namespace: evhua5816bd
+      kv_scope: oles0305-kv-evh-scope
+      kv_conn_str_key: oles0305-evh-connection-str
+      alert_email: oles0305@gmail.com
+
