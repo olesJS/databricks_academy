@@ -5,12 +5,8 @@ on:
     branches: [master, main]
     paths:
       - "lab-08-ci-cd/**"
-      - .github/workflows/lab08-ci.yml
-  push:
-    branches: [lab-08]
-    paths:
-      - "lab-08-ci-cd/**"
-      - .github/workflows/lab08-ci.yml
+      - ".github/workflows/lab08-ci.yml"
+  workflow_dispatch:
 
 defaults:
   run:
