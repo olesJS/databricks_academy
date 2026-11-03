@@ -1,0 +1,28 @@
+resources:
+  jobs:
+    job_oles0305_lab8_dq:
+      name: oles0305_lab08_dq_checks
+
+      email_notifications:
+        on_failure:
+          - ${var.alert_email}
+
+      tasks:
+        - task_key: dq_gate
+          environment_key: default_env
+          spark_python_task:
+            python_file: ../tests/run_dq_tests.py
+            parameters:
+              - ${workspace.file_path}
+              - ${var.catalog_name}
+              - ${var.schema_name}
+
+      environments:
+        - environment_key: default_env
+          spec:
+            environment_version: "6"
+            dependencies:
+              - ../dist/*.whl
+              - pytest
+              - pyyaml
+              - databricks-labs-dqx==0.17.0
