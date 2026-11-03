@@ -1,0 +1,8 @@
+resources:
+  dashboards:
+    formula_1_analytics:
+      display_name: "Formula 1 Analytics"
+      file_path: ../src/formula_1_analytics.lvdash.json
+      warehouse_id: ${var.warehouse_id}
+      dataset_catalog: ${var.catalog_name}
+      dataset_schema: ${var.schema_name}_gold
