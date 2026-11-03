@@ -1,0 +1,27 @@
+# Databricks notebook source
+from f1_pipeline.transforms.gold import build_fact_results
+
+# COMMAND ----------
+
+dbutils.widgets.text("catalog_name", "", "Catalog Name")
+dbutils.widgets.text("silver_schema", "", "Silver Schema")
+dbutils.widgets.text("gold_schema", "", "Gold Schema")
+
+# COMMAND ----------
+
+CATALOG = dbutils.widgets.get("catalog_name")
+
+silver_schema = dbutils.widgets.get("silver_schema")
+gold_schema = dbutils.widgets.get("gold_schema")
+
+SILVER = f"{CATALOG}.{silver_schema}"
+GOLD = f"{CATALOG}.{gold_schema}"
+
+# COMMAND ----------
+
+df_silver_results = spark.read.table(f"{SILVER}.results_sdp")
+df_silver_races = spark.read.table(f"{SILVER}.races_sdp")
+
+df_gold_results = build_fact_results(df_silver_results, df_silver_races)
+
+df_gold_results.write.mode("overwrite").saveAsTable(f"{GOLD}.fact_results")

@@ -1,0 +1,4 @@
+subscription_id      = "<subscription-id>"
+resource_group_name  = "<rg-of-storage>"
+storage_account_name = "<storage-account>"
+container_name       = "<container>"
