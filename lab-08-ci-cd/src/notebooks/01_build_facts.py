@@ -25,13 +25,3 @@ df_silver_races = spark.read.table(f"{SILVER}.races_sdp")
 df_gold_results = build_fact_results(df_silver_results, df_silver_races)
 
 df_gold_results.write.mode("overwrite").saveAsTable(f"{GOLD}.fact_results")
-
-# COMMAND ----------
-
-spark.sql(f"""
-    INSERT INTO {GOLD}.data_volume_log
-    SELECT 'fact_results'
-        , COUNT(*)
-        , current_timestamp()
-    FROM {GOLD}.fact_results
-""")

@@ -13,6 +13,10 @@ variables:
   kv_scope:
   kv_conn_str_key:
   alert_email:
+  warehouse_id:
+    description: SQL Warehouse ID for Dashboard
+  reader_group:
+    description: Group with read access to PROD
 
 artifacts:
   f1_wheel:
@@ -25,7 +29,7 @@ targets:
     mode: development
     default: true
     workspace:
-      host: https://adb-7405604651938730.10.azuredatabricks.net  # dbr_dev
+      host: https://adb-7405604651938730.10.azuredatabricks.net
     variables:
       catalog_name: dbr_dev_ua5816bd
       schema_name: oles0305
@@ -34,5 +38,63 @@ targets:
       kv_scope: oles0305-kv-evh-scope
       kv_conn_str_key: oles0305-evh-connection-str
       alert_email: oles0305@gmail.com
+      warehouse_id: abb8ea0ecf2e1a89
 
-
+  prod:
+    mode: production
+    workspace:
+      host: https://adb-7405604651938730.10.azuredatabricks.net
+      root_path: /Workspace/Users/d1a2118a-1d70-44cf-ba58-ea3454da6727/.bundle/${bundle.name}/${bundle.target}
+    run_as:
+      user_name: oles0305@softserve.academy # TODO: switch to service_principal_name
+    permissions:
+      - user_name: oles0305@softserve.academy
+        level: CAN_MANAGE
+      - service_principal_name: d1a2118a-1d70-44cf-ba58-ea3454da6727
+        level: CAN_MANAGE
+    variables:
+      catalog_name: dbr_dev_ua5816bd
+      schema_name: oles0305_prod
+      event_hub_name: oles0305-ev-hub
+      event_hub_namespace: evhua5816bd
+      kv_scope: oles0305-kv-evh-scope
+      kv_conn_str_key: oles0305-evh-connection-str
+      alert_email: oles0305@gmail.com
+      warehouse_id: abb8ea0ecf2e1a89
+      reader_group: account users
+    resources:
+      schemas:
+        base:
+          catalog_name: ${var.catalog_name}
+          name: ${var.schema_name}
+          grants:
+            - principal: ${var.reader_group}
+              privileges: [ USE_SCHEMA, SELECT ]
+        bronze:
+          catalog_name: ${var.catalog_name}
+          name: ${var.schema_name}_bronze
+          grants:
+            - principal: ${var.reader_group}
+              privileges: [ USE_SCHEMA, SELECT ]
+        silver:
+          catalog_name: ${var.catalog_name}
+          name: ${var.schema_name}_silver
+          grants:
+            - principal: ${var.reader_group}
+              privileges: [ USE_SCHEMA, SELECT ]
+        gold:
+          catalog_name: ${var.catalog_name}
+          name: ${var.schema_name}_gold
+          grants:
+            - principal: ${var.reader_group}
+              privileges: [ USE_SCHEMA, SELECT ]
+      volumes:
+        landing:
+          catalog_name: ${var.catalog_name}
+          schema_name: ${resources.schemas.base.name}
+          name: landing
+          volume_type: EXTERNAL
+          storage_location: abfss://oles0305@dlsua5816bd.dfs.core.windows.net/oles0305-prod/landing
+      pipelines:
+        pipeline_oles0305_f1_lab08:
+          target: ${resources.schemas.base.name}
