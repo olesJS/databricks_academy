@@ -17,6 +17,7 @@ variables:
     description: SQL Warehouse ID for Dashboard
   reader_group:
     description: Group with read access to PROD
+    default: account users
 
 artifacts:
   f1_wheel:
@@ -61,7 +62,6 @@ targets:
       kv_conn_str_key: oles0305-evh-connection-str
       alert_email: oles0305@gmail.com
       warehouse_id: abb8ea0ecf2e1a89
-      reader_group: account users
     resources:
       schemas:
         base:
