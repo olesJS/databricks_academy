@@ -47,7 +47,7 @@ targets:
       host: https://adb-7405604651938730.10.azuredatabricks.net
       root_path: /Workspace/Users/d1a2118a-1d70-44cf-ba58-ea3454da6727/.bundle/${bundle.name}/${bundle.target}
     run_as:
-      user_name: oles0305@softserve.academy # TODO: switch to service_principal_name
+      service_principal_name: d1a2118a-1d70-44cf-ba58-ea3454da6727
     permissions:
       - user_name: oles0305@softserve.academy
         level: CAN_MANAGE
@@ -70,24 +70,32 @@ targets:
           grants:
             - principal: ${var.reader_group}
               privileges: [ USE_SCHEMA, SELECT ]
+            - principal: d1a2118a-1d70-44cf-ba58-ea3454da6727
+              privileges: [ ALL_PRIVILEGES ]
         bronze:
           catalog_name: ${var.catalog_name}
           name: ${var.schema_name}_bronze
           grants:
             - principal: ${var.reader_group}
               privileges: [ USE_SCHEMA, SELECT ]
+            - principal: d1a2118a-1d70-44cf-ba58-ea3454da6727
+              privileges: [ ALL_PRIVILEGES ]
         silver:
           catalog_name: ${var.catalog_name}
           name: ${var.schema_name}_silver
           grants:
             - principal: ${var.reader_group}
               privileges: [ USE_SCHEMA, SELECT ]
+            - principal: d1a2118a-1d70-44cf-ba58-ea3454da6727
+              privileges: [ ALL_PRIVILEGES ]
         gold:
           catalog_name: ${var.catalog_name}
           name: ${var.schema_name}_gold
           grants:
             - principal: ${var.reader_group}
               privileges: [ USE_SCHEMA, SELECT ]
+            - principal: d1a2118a-1d70-44cf-ba58-ea3454da6727
+              privileges: [ ALL_PRIVILEGES ]
       volumes:
         landing:
           catalog_name: ${var.catalog_name}
@@ -95,6 +103,9 @@ targets:
           name: landing
           volume_type: EXTERNAL
           storage_location: abfss://oles0305@dlsua5816bd.dfs.core.windows.net/oles0305-prod/landing
+          grants:
+            - principal: d1a2118a-1d70-44cf-ba58-ea3454da6727
+              privileges: [ READ_VOLUME, WRITE_VOLUME ]
       pipelines:
         pipeline_oles0305_f1_lab08:
           target: ${resources.schemas.base.name}
