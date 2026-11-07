@@ -1,0 +1,21 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "dbr_ops"
+version = "0.1.0"
+requires-python = ">=3.12,<3.13"
+dependencies = ["databricks-sdk"]
+
+[project.scripts]
+dbrops = "dbr_ops.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[project.optional-dependencies]
+dev = ["pytest"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]

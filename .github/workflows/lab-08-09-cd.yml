@@ -1,0 +1,79 @@
+name: lab-08-09-cd
+
+on:
+  push:
+    branches: [master]
+    paths:
+      - "lab-08-ci-cd/**"
+      - "lab-09-rest-api-automation/**"
+      - ".github/workflows/lab-08-09-cd.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: lab08-production-deploy
+  cancel-in-progress: false
+
+jobs:
+  deploy_prod:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: lab-08-ci-cd
+    env:
+      DATABRICKS_AUTH_TYPE: azure-client-secret
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Build a wheel
+        run: |
+          pip install build
+          python -m build --wheel
+
+      - uses: databricks/setup-cli@main
+
+      - name: Validate bundle
+        run: databricks bundle validate -t prod
+
+      - name: Deploy bundle
+        run: databricks bundle deploy -t prod
+
+  verify_prod:
+    runs-on: ubuntu-latest
+    needs: deploy_prod
+    timeout-minutes: 30
+    defaults:
+      run:
+        working-directory: lab-09-rest-api-automation
+    env:
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_DBR_DEV }}
+      DATABRICKS_AUTH_TYPE: azure-client-secret
+      ARM_CLIENT_ID: ${{ secrets.ARM_CLIENT_ID }}
+      ARM_CLIENT_SECRET: ${{ secrets.ARM_CLIENT_SECRET }}
+      ARM_TENANT_ID: ${{ secrets.ARM_TENANT_ID }}
+      POLICY_ID: ${{ vars.CLUSTER_POLICY_ID }}
+      NODE_TYPE: ${{ vars.CLUSTER_NODE_TYPE }}
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -e .
+
+      - name: Run prod job, provision compute, verify data
+        run: |
+          dbrops full_run \
+            --policy_id "$POLICY_ID" \
+            --node_type "$NODE_TYPE" \
+            --job oles0305_lab8_formula1 \
+            --schema oles0305_prod
