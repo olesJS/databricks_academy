@@ -26,13 +26,15 @@ def run_full_run(
     remote_path = None
     try:
         remote_path = upload_notebook(w, notebook_file, report.identity.user_name)
-        report.cluster_id = create_cluster(w, spec)
-        report.runs.append(run_notebook(w, remote_path, report.cluster_id, timeout_s, parameters))
 
         if job_ref:
             report.runs.append(run_job(w, job_ref, timeout_s))
+
         if pipeline_ref:
             report.updates.append(run_pipeline(w, pipeline_ref, timeout_s=timeout_s))
+
+        report.cluster_id = create_cluster(w, spec)
+        report.runs.append(run_notebook(w, remote_path, report.cluster_id, timeout_s, parameters))
     except Exception as e:
         log.error("Full run step failed: %s", e)
         report.error = str(e)
