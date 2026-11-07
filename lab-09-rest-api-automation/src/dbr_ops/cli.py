@@ -1,6 +1,9 @@
 import argparse
 import sys
+import json
 import logging
+from datetime import datetime
+from pathlib import Path
 
 from databricks.sdk.errors import DatabricksError
 
@@ -9,6 +12,7 @@ from dbr_ops.client import get_client, get_identity
 from dbr_ops.clusters import create_cluster, delete_cluster
 from dbr_ops.jobs import run_job, run_notebook, get_run_status
 from dbr_ops.pipelines import run_pipeline
+from dbr_ops.full_run import run_full_run
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -59,6 +63,24 @@ def build_parser() -> argparse.ArgumentParser:
     pl_run.add_argument("pipeline", help="pipeline name or id")
     pl_run.add_argument("--full_refresh", action="store_true", help="reprocess all data")
     pl_run.add_argument("--timeout", type=int, default=1800, help="seconds")
+
+    # full_run
+    full_run = sub.add_parser(
+        "full_run",
+        help="provision a cluster, run a notebook (+ optional job or pipeline), report, clean up"
+    )
+    full_run.add_argument("--notebook_file",
+                          dest="notebook_file",
+                          default="notebooks/platform_check.py",
+                          help="local .py notebook to upload and run")
+    full_run.add_argument("--job", help="optional job name or id to run afterwards")
+    full_run.add_argument("--pipeline", help="optional pipeline name or id to update afterwards")
+    full_run.add_argument("--name", help="cluster name")
+    full_run.add_argument("--node_type", dest="node_type")
+    full_run.add_argument("--policy_id", dest="policy_id")
+    full_run.add_argument("--catalog", default="dbr_dev_ua5816bd")
+    full_run.add_argument("--schema", default="oles0305_prod")
+    full_run.add_argument("--timeout", type=int, default=1800, help="seconds per step")
 
     return parser
 
@@ -131,6 +153,67 @@ def cmd_pipeline(args):
     return 0 if outcome.ok else 1
 
 
+def _print_profile(output):
+    if not output:
+        return
+
+    try:
+        data = json.loads(output)
+    except ValueError:
+        return
+
+    for layer, tables in data.get("layers", {}).items():
+        for name, p in tables.items():
+            print(f" {layer}.{name}: {p['rows']} rows, {p['columns']} columns, modified {p.get('last_modified', '-')}")
+
+
+def print_report(r):
+    print("Full run report:")
+    if r.identity:
+        print(f"Run as: {r.identity.user_name} at {r.identity.host}")
+
+    if r.cluster_id:
+        print(f"Cluster: {r.cluster_id} ({'deleted' if r.cluster_deleted else 'NOT DELETED'})")
+    else:
+        print("Cluster: not created")
+
+    for run in r.runs:
+        print(f"Run {run.run_id}: {run.life_cycle_state} / {run.result_state or '-'}  {run.url}")
+        _print_profile(run.output)
+
+    for u in r.updates:
+        print(f"Pipeline update {u.update_id}: {u.state}  {u.url}")
+
+    if r.error:
+        print(f"Error: {r.error}")
+
+    print(f"Result: {'SUCCESS' if r.ok else 'FAILED'}")
+
+
+def cmd_full_run(args):
+    notebook_file = Path(args.notebook_file)
+    if not notebook_file.is_file():
+        logging.getLogger(__name__).error("Notebook file not found: %s", notebook_file)
+        return 1
+
+    w = get_client(args.profile)
+    spec = ClusterSpec(
+        name=args.name or f"dbrops-full-run-{datetime.now():%Y%m%d-%H%M%S}",
+        node_type_id=args.node_type,
+        policy_id=args.policy_id
+    )
+
+    report = run_full_run(
+        w, spec, notebook_file,
+        job_ref=args.job,
+        pipeline_ref=args.pipeline,
+        parameters={"catalog": args.catalog, "schema": args.schema},
+        timeout_s=args.timeout
+    )
+    print_report(report)
+    return 0 if report.ok else 1
+
+
 def main(argv=None):
     args = build_parser().parse_args(argv)
     setup_logging(args.verbose)
@@ -140,7 +223,8 @@ def main(argv=None):
         "job": cmd_job,
         "notebook": cmd_notebook,
         "status": cmd_status,
-        "pipeline": cmd_pipeline
+        "pipeline": cmd_pipeline,
+        "full_run": cmd_full_run
     }
 
     try:

@@ -1,5 +1,6 @@
 import logging
 import time
+import dataclasses
 
 from databricks.sdk import WorkspaceClient
 from databricks.sdk.service.jobs import NotebookTask, SubmitTask
@@ -68,18 +69,30 @@ def run_job(w: WorkspaceClient, ref: str, timeout_s: int = 1800) -> RunOutcome:
     return wait_for_run(w, run_id, timeout_s)
 
 
+def get_notebook_output(w: WorkspaceClient, run_id: int) -> str | None:
+    run = w.jobs.get_run(run_id=run_id)
+    if not run.tasks:
+        return None
+    out = w.jobs.get_run_output(run_id=run.tasks[0].run_id)
+    return out.notebook_output.result if out.notebook_output else None
+
+
 def run_notebook(
     w: WorkspaceClient,
     path: str,
     cluster_id: str | None = None,
-    timeout_s: int = 1800
+    timeout_s: int = 1800,
+    parameters: dict | None = None
 ) -> RunOutcome:
     task = SubmitTask(
         task_key="notebook",
-        notebook_task=NotebookTask(notebook_path=path),
+        notebook_task=NotebookTask(notebook_path=path, base_parameters=parameters),
         existing_cluster_id=cluster_id  # None = serverless
     )
     log.info("Submitting notebook %s (%s)", path, f"cluster {cluster_id}" if cluster_id else "serverless")
     run_id = w.jobs.submit(run_name=f"dbrops: {path}", tasks=[task]).response.run_id
     log.info("Run started: %s", run_id)
-    wait_for_run(w, run_id, timeout_s)
+    outcome = wait_for_run(w, run_id, timeout_s)
+    if outcome.ok:
+        outcome = dataclasses.replace(outcome, output=get_notebook_output(w, run_id))
+    return outcome

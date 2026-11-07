@@ -25,6 +25,7 @@ class RunOutcome:
     result_state: str | None
     url: str
     message: str = ""
+    output: str | None = None
 
     @property
     def finished(self) -> bool:
@@ -52,7 +53,7 @@ class UpdateOutcome:
 
 
 @dataclass()
-class FullReport:
+class FullRunReport:
     identity: Identity = None
     cluster_id: str = None
     runs: list[RunOutcome] = field(default_factory=list)
