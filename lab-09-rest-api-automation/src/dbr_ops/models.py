@@ -32,3 +32,19 @@ class RunOutcome:
     @property
     def ok(self) -> bool:
         return self.result_state == "SUCCESS"
+
+
+@dataclass(frozen=True)
+class UpdateOutcome:
+    pipeline_id: str
+    update_id: str
+    state: str
+    url: str
+
+    @property
+    def finished(self) -> bool:
+        return self.state in {"COMPLETED", "FAILED", "CANCELED"}
+
+    @property
+    def ok(self) -> bool:
+        return self.state == "COMPLETED"

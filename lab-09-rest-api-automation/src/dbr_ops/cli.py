@@ -8,6 +8,7 @@ from dbr_ops.models import ClusterSpec
 from dbr_ops.client import get_client, get_identity
 from dbr_ops.clusters import create_cluster, delete_cluster
 from dbr_ops.jobs import run_job, run_notebook, get_run_status
+from dbr_ops.pipelines import run_pipeline
 
 
 def build_parser() -> argparse.ArgumentParser:
@@ -38,6 +39,7 @@ def build_parser() -> argparse.ArgumentParser:
     job_run.add_argument("job", help="job name or id")
     job_run.add_argument("--timeout", type=int, default=1800, help="seconds")
 
+    # notebook
     notebook = sub.add_parser("notebook", help="run notebooks")
     sub_nb = notebook.add_subparsers(dest="action", required=True)
     nb_run = sub_nb.add_parser("run", help="run a notebook once and wait for the result")
@@ -45,8 +47,17 @@ def build_parser() -> argparse.ArgumentParser:
     nb_run.add_argument("--cluster-id", help="existing cluster (default: serverless)")
     nb_run.add_argument("--timeout", type=int, default=1800, help="seconds")
 
+    # status
     status = sub.add_parser("status", help="show the status of a run")
     status.add_argument("run_id", type=int)
+
+    # pipeline
+    pipeline = sub.add_parser("pipeline", help="run pipelines")
+    sub_pl = pipeline.add_subparsers(dest="action", required=True)
+    pl_run = sub_pl.add_parser("run", help="start a pipeline update and wait for the result")
+    pl_run.add_argument("pipeline", help="pipeline name or id")
+    pl_run.add_argument("--full-refresh", action="store_true", help="reprocess all data")
+    pl_run.add_argument("--timeout", type=int, default=1800, help="seconds")
 
     return parser
 
@@ -111,6 +122,13 @@ def cmd_status(args):
     return 1 if outcome.finished and not outcome.ok else 0
 
 
+def cmd_pipeline(args):
+    outcome = run_pipeline(get_client(args.profile), args.pipeline, args.full_refresh, args.timeout)
+    print(f"Pipeline {outcome.pipeline_id}, update {outcome.update_id}: {outcome.state}")
+    print(f"URL: {outcome.url}")
+    return 0 if outcome.ok else 1
+
+
 def main(argv=None):
     args = build_parser().parse_args(argv)
     setup_logging(args.verbose)
@@ -119,7 +137,8 @@ def main(argv=None):
         "cluster": cmd_cluster,
         "job": cmd_job,
         "notebook": cmd_notebook,
-        "status": cmd_status
+        "status": cmd_status,
+        "pipeline": cmd_pipeline
     }
 
     try:
