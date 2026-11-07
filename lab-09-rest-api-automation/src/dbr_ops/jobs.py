@@ -25,8 +25,7 @@ def get_run_status(w: WorkspaceClient, run_id: int) -> RunOutcome:
     return _to_outcome(w.jobs.get_run(run_id=run_id))
 
 
-def wait_for_run(w: WorkspaceClient, run_id: int, timeout_s: int = 1800) -> RunOutcome:
-    poll_s = 10
+def wait_for_run(w: WorkspaceClient, run_id: int, timeout_s: int = 1800, poll_s: int = 10) -> RunOutcome:
     deadline = time.time() + timeout_s
 
     last_state = None
