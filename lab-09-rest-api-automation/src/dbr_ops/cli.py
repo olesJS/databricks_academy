@@ -28,6 +28,7 @@ def build_parser() -> argparse.ArgumentParser:
     create.add_argument("--name", required=True)
     create.add_argument("--workers", type=int, default=0, help="0 = single mode")
     create.add_argument("--node_type", help="default: auto-selected")
+    create.add_argument("--policy_id", help="cluster policy id")
 
     delete = sub_cluster.add_parser("delete", help="permanently delete a cluster")
     delete.add_argument("--cluster_id", required=True)
@@ -44,7 +45,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub_nb = notebook.add_subparsers(dest="action", required=True)
     nb_run = sub_nb.add_parser("run", help="run a notebook once and wait for the result")
     nb_run.add_argument("path", help="workspace path of the notebook")
-    nb_run.add_argument("--cluster-id", help="existing cluster (default: serverless)")
+    nb_run.add_argument("--cluster_id", help="existing cluster (default: serverless)")
     nb_run.add_argument("--timeout", type=int, default=1800, help="seconds")
 
     # status
@@ -56,7 +57,7 @@ def build_parser() -> argparse.ArgumentParser:
     sub_pl = pipeline.add_subparsers(dest="action", required=True)
     pl_run = sub_pl.add_parser("run", help="start a pipeline update and wait for the result")
     pl_run.add_argument("pipeline", help="pipeline name or id")
-    pl_run.add_argument("--full-refresh", action="store_true", help="reprocess all data")
+    pl_run.add_argument("--full_refresh", action="store_true", help="reprocess all data")
     pl_run.add_argument("--timeout", type=int, default=1800, help="seconds")
 
     return parser
@@ -88,7 +89,8 @@ def cmd_cluster(args):
         spec = ClusterSpec(
             name=args.name,
             num_workers=args.workers,
-            node_type_id=args.node_type
+            node_type_id=args.node_type,
+            policy_id=args.policy_id
         )
         cluster_id = create_cluster(w, spec)
         print(cluster_id)

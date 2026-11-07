@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 
 
 @dataclass(frozen=True)
@@ -15,6 +15,7 @@ class ClusterSpec:
     autotermination_minutes: int = 10
     spark_version: str | None = None
     node_type_id: str | None = None
+    policy_id: str | None = None
 
 
 @dataclass(frozen=True)
@@ -48,3 +49,23 @@ class UpdateOutcome:
     @property
     def ok(self) -> bool:
         return self.state == "COMPLETED"
+
+
+@dataclass()
+class FullReport:
+    identity: Identity = None
+    cluster_id: str = None
+    runs: list[RunOutcome] = field(default_factory=list)
+    updates: list[UpdateOutcome] = field(default_factory=list)
+    cluster_deleted: bool = False
+    error: str = None
+
+    @property
+    def ok(self) -> bool:
+        return (
+            self.error is None
+            and self.cluster_deleted
+            and bool(self.runs or self.updates)
+            and all(r.ok for r in self.runs)
+            and all(u.ok for u in self.updates)
+        )

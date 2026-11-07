@@ -27,15 +27,23 @@ def create_cluster(w: WorkspaceClient, spec: ClusterSpec) -> str:
         "Creating cluster %r (spark=%s, node=%s, workers=%d); waiting for RUNNING...",
         spec.name, spark_version, node_type_id, spec.num_workers,
     )
+
+    policy_kwargs = {}
+    if spec.policy_id:
+        policy_kwargs["policy_id"] = spec.policy_id
+        policy_kwargs["apply_policy_default_values"] = True
+    else:
+        policy_kwargs["data_security_mode"] = DataSecurityMode.SINGLE_USER
+        policy_kwargs["single_user_name"] = get_identity(w).user_name
+
     cluster_details = w.clusters.create_and_wait(
         cluster_name=spec.name,
         spark_version=spark_version,
         node_type_id=node_type_id,
         num_workers=spec.num_workers,
         autotermination_minutes=spec.autotermination_minutes,
-        data_security_mode=DataSecurityMode.SINGLE_USER,
-        single_user_name=get_identity(w).user_name,
-        **extra
+        **policy_kwargs,
+        **extra,
     )
 
     log.info("Cluster %s is RUNNING", cluster_details.cluster_id)
