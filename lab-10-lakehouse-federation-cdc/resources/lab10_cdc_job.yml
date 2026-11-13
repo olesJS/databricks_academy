@@ -1,0 +1,24 @@
+resources:
+  jobs:
+    oles0305_lab10_cdc:
+      name: oles0305_lab10_cdc
+      max_concurrent_runs: 1
+
+      parameters:
+        - name: delta_catalog
+          default: ${var.catalog}
+        - name: delta_schema
+          default: ${var.schema}
+      
+      tasks:
+        - task_key: customer_scd2_load
+          notebook_task:
+            notebook_path: ../notebooks/04_cdc_pipeline.py
+          max_retries: 0
+      
+      trigger:
+        pause_status: PAUSED
+        table_update:
+          table_names:
+            - ${var.catalog}.${var.schema}.customer_src
+          wait_after_last_change_seconds: 60 
