@@ -1,0 +1,24 @@
+syntax = "proto2";
+
+message Result {
+	required int32 result_id = 1;
+	required int32 race_id = 2;
+	required int32 driver_id = 3;
+	required int32 constructor_id = 4;
+	optional int32 number = 5;
+	required int32 grid = 6;
+	optional int32 position = 7;
+	required string position_text = 8;
+	required int32 position_order = 9;
+	required double points = 10;
+	required int32 laps = 11;
+	optional string time = 12;
+	optional int64 milliseconds = 13;
+	optional int32 fastest_lap = 14;
+	optional int32 rank = 15;
+	optional string fastest_lap_time = 16;
+	optional double fastest_lap_speed = 17;
+	required int32 status_id = 18;
+	required string _source_file = 19;
+	required int64 _produced_at = 20;
+}
