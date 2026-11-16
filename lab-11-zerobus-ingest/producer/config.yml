@@ -1,0 +1,7 @@
+zerobus:
+  workspace_url: https://adb-7405604651938730.10.azuredatabricks.net
+  server_endpoint: https://7405604651938730.zerobus.eastus.azuredatabricks.net
+  table: dbr_dev_ua5816bd.oles0305_bronze.results_zerobus
+producer:
+  csv_path: data/results.csv
+  batch_size: 500
