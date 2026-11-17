@@ -1,0 +1,24 @@
+bundle:
+  name: lab-11-zerobus-ingest
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    default: dbr_dev_ua5816bd
+  bronze_schema:
+    default: oles0305_bronze
+  bronze_table:
+    default: results_zerobus
+  silver_schema:
+    default: oles0305_silver
+  silver_table:
+    default: results_zerobus
+
+targets:
+  dev:
+    mode: development
+    default: true
+    workspace:
+      host: https://adb-7405604651938730.10.azuredatabricks.net
