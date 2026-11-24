@@ -52,7 +52,7 @@ spark.sql(f"CREATE VOLUME IF NOT EXISTS {BRONZE}.{raw_volume} COMMENT 'Raw JSON 
 # COMMAND ----------
 
 spark.sql(f"""
-    CREATE TABLE IF NOT EXISTS {BRONZE}.wiki_pages (
+    CREATE OR REPLACE TABLE {BRONZE}.wiki_pages (
         page_id          BIGINT    NOT NULL,
         title            STRING    NOT NULL,
         requested_title  STRING,
@@ -62,8 +62,7 @@ spark.sql(f"""
         fetched_at       TIMESTAMP NOT NULL,
         text             STRING    NOT NULL,
         _source_file     STRING    NOT NULL,
-        _ingested_at     TIMESTAMP NOT NULL,
-        CONSTRAINT pk_wiki_pages PRIMARY KEY (page_id)
+        _ingested_at     TIMESTAMP NOT NULL
     )
     COMMENT 'Wikipedia F1 articles as fetched from the API'
 """)
@@ -76,7 +75,7 @@ spark.sql(f"""
 # COMMAND ----------
 
 spark.sql(f"""
-    CREATE TABLE IF NOT EXISTS {SILVER}.wiki_chunks (
+    CREATE OR REPLACE TABLE {SILVER}.wiki_chunks (
         chunk_id      STRING    NOT NULL,
         chunk_size    INT       NOT NULL,
         page_id       BIGINT    NOT NULL,
@@ -88,8 +87,7 @@ spark.sql(f"""
         token_count   INT       NOT NULL,
         url           STRING    NOT NULL,
         revision_id   BIGINT    NOT NULL,
-        _chunked_at   TIMESTAMP NOT NULL,
-        CONSTRAINT pk_wiki_chunks PRIMARY KEY (chunk_id)
+        _chunked_at   TIMESTAMP NOT NULL
     )
     COMMENT 'Wikipedia F1 articles split into chunks; chunk_size = target size in tokens (300 or 500)'
     TBLPROPERTIES (delta.enableChangeDataFeed = true)

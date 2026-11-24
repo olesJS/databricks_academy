@@ -117,7 +117,7 @@ def fetch_page(session: requests.Session, title: str) -> dict | None:
 
 
 def upload_page(w: WorkspaceClient, page: dict) -> str:
-    path = f"{VOLUME_DIR}/{page['category']}__{page['page_id']}.json"
+    path = f"{VOLUME_DIR}/{page['category']}__{page['page_id']}__{page['revision_id']}.json"
     content = json.dumps(page, ensure_ascii=False, indent=2).encode("utf-8")
     w.files.upload(path, io.BytesIO(content), overwrite=True)
     return path
