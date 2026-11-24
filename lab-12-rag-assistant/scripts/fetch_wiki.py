@@ -11,7 +11,7 @@ from databricks.sdk.service.catalog import VolumeType
 
 PROFILE = "uni_free"
 CATALOG = "workspace"
-SCHEMA = "f1_rag"
+SCHEMA = "f1_rag_bronze"
 VOLUME = "raw"
 VOLUME_DIR = f"/Volumes/{CATALOG}/{SCHEMA}/{VOLUME}/wiki"
 
