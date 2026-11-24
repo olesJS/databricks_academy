@@ -1,5 +1,7 @@
 import time
 
+import mlflow
+from mlflow.entities import SpanType
 from databricks.sdk import WorkspaceClient
 from databricks.vector_search.client import VectorSearchClient
 
@@ -11,6 +13,9 @@ from rag.config import (
 RESULT_COLUMNS = ["chunk_id", "title", "category", "section", "chunk_text", "url"]
 
 _index = None
+
+# every LLM call through the OpenAI client becomes a span in the trace (prompt, answer, tokens)
+mlflow.openai.autolog()
 
 
 def get_index():
@@ -25,7 +30,7 @@ def retrieve(
     query: str,
     k: int = TOP_K,
     category: str | None = None,
-    chunk_size: int = DEFAULT_CHUNK_SIZE,
+    chunk_size: int = DEFAULT_CHUNK_SIZE
 ) -> list[dict]:
     """Return the top-k chunks for a question."""
     if category is not None and category not in CATEGORIES:
@@ -35,17 +40,37 @@ def retrieve(
     if category is not None:
         filters["category"] = category
 
-    response = get_index().similarity_search(
-        query_text=query,
-        columns=RESULT_COLUMNS,
-        filters=filters,
-        num_results=k,
-        query_type="HYBRID",
-    )
+    with mlflow.start_span(name="vector_search", span_type=SpanType.RETRIEVER) as span:
+        span.set_inputs({"query": query, "k": k, "filters": filters})
 
-    rows = response.get("result", {}).get("data_array") or []
-    # every row = requested columns + score as the last element
-    return [dict(zip(RESULT_COLUMNS + ["score"], row)) for row in rows]
+        response = get_index().similarity_search(
+            query_text=query,
+            columns=RESULT_COLUMNS,
+            filters=filters,
+            num_results=k,
+            query_type="HYBRID"
+        )
+
+        rows = response.get("result", {}).get("data_array") or []
+        # every row = requested columns + score as the last element
+        results = [dict(zip(RESULT_COLUMNS + ["score"], row)) for row in rows]
+
+        # MLflow's document format
+        span.set_outputs([
+            {
+                "id": r["chunk_id"],
+                "page_content": r["chunk_text"],
+                "metadata": {
+                    "title": r["title"], 
+                    "section": r["section"],
+                    "url": r["url"], 
+                    "score": r["score"]
+                }
+            }
+            for r in results
+        ])
+
+    return results
 
 
 NO_ANSWER = "I don't know based on the available articles."
@@ -78,11 +103,12 @@ def format_context(chunks: list[dict]) -> str:
     )
 
 
+@mlflow.trace(name="ask", span_type=SpanType.CHAIN)
 def ask(
     question: str,
     category: str | None = None,
     use_retrieval: bool = True,
-    chunk_size: int = CHUNK_SIZE,
+    chunk_size: int = DEFAULT_CHUNK_SIZE,
     k: int = TOP_K
 ) -> dict:
     started = time.perf_counter()
