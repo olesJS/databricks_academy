@@ -73,17 +73,19 @@ def retrieve(
     return results
 
 
-NO_ANSWER = "I don't know based on the available articles."
+NO_ANSWER_RAG = "I don't know based on the available articles."
+NO_ANSWER_NO_RAG = "I don't know."
+NO_ANSWERS = (NO_ANSWER_RAG, NO_ANSWER_NO_RAG)
 
 SYSTEM_PROMPT_RAG = f"""You answer questions about Formula 1.
 Use ONLY the context below, taken from Wikipedia articles.
-- If the context does not contain the answer, reply exactly: "{NO_ANSWER}"
+- If the context does not contain the answer, reply exactly: "{NO_ANSWER_RAG}"
 - Do not use outside knowledge, even if you are sure.
 - Cite the sources you used in square brackets, like [Lewis Hamilton § Formula One career].
 - Be concise: 1-4 sentences."""
 
 SYSTEM_PROMPT_NO_RAG = f"""You answer questions about Formula 1.
-- If you are not sure, reply exactly: "{NO_ANSWER}"
+- If you are not sure, reply exactly: "{NO_ANSWER_NO_RAG}"
 - Be concise: 1-4 sentences."""
 
 _llm = None
@@ -127,7 +129,7 @@ def ask(
     }
 
     if use_retrieval and not chunks:
-        result["answer"] = NO_ANSWER
+        result["answer"] = NO_ANSWER_RAG
         result["latency_ms"] = (time.perf_counter() - started) * 1000
         return result
     

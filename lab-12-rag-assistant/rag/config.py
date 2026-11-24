@@ -10,6 +10,8 @@ QA_LOG_TABLE = f"{CATALOG}.{GOLD_SCHEMA}.qa_log"
 CHUNK_SIZES = {200: 30, 400: 60}
 DEFAULT_CHUNK_SIZE = 400
 
+CATEGORIES = ("driver", "team", "circuit", "season", "general")
+
 # Vector Search
 VS_ENDPOINT = "f1_rag_vs"
 VS_INDEX = f"{CATALOG}.{SILVER_SCHEMA}.wiki_chunks_index"
