@@ -1,0 +1,20 @@
+# Model Serving endpoint for the F1 RAG agent (registered by the f1_rag_register_agent job).
+# The model version must exist in UC before this endpoint is deployed.
+resources:
+  model_serving_endpoints:
+    f1_rag_agent:
+      name: f1-rag-agent
+      config:
+        served_entities:
+          - name: f1-rag-agent
+            entity_name: ${var.catalog}.${var.gold_schema}.${var.agent_model_name}
+            entity_version: ${var.agent_model_version}
+            workload_type: CPU
+            workload_size: Small
+            scale_to_zero_enabled: true
+      ai_gateway:
+        inference_table_config:
+          enabled: true
+          catalog_name: ${var.catalog}
+          schema_name: ${var.gold_schema}
+          table_name_prefix: f1_rag_agent

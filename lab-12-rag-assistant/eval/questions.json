@@ -1,0 +1,194 @@
+[
+  {
+    "id": "q01",
+    "question": "How many World Drivers' Championships did Michael Schumacher win?",
+    "expected_answer": "Seven.",
+    "expected_title": "Michael Schumacher",
+    "category": "driver",
+    "answerable": true
+  },
+  {
+    "id": "q02",
+    "question": "Which team did Lewis Hamilton join in 2025?",
+    "expected_answer": "Scuderia Ferrari.",
+    "expected_title": "Lewis Hamilton",
+    "category": "driver",
+    "answerable": true
+  },
+  {
+    "id": "q03",
+    "question": "In which country is the Suzuka circuit located?",
+    "expected_answer": "Japan (Suzuka, Mie Prefecture).",
+    "expected_title": "Suzuka Circuit",
+    "category": "circuit",
+    "answerable": true
+  },
+  {
+    "id": "q04",
+    "question": "Who won the 2021 Formula One World Drivers' Championship?",
+    "expected_answer": "Max Verstappen.",
+    "expected_title": "2021 Formula One World Championship",
+    "category": "season",
+    "answerable": true
+  },
+  {
+    "id": "q05",
+    "question": "Who won the 2025 Formula One World Drivers' Championship, and by how many points?",
+    "expected_answer": "Lando Norris, by two points over Max Verstappen.",
+    "expected_title": "2025 Formula One World Championship",
+    "category": "season",
+    "answerable": true
+  },
+  {
+    "id": "q06",
+    "question": "What is the drag reduction system (DRS) used for?",
+    "expected_answer": "It opens a flap in the rear wing to reduce drag and increase top speed, to help a following car overtake.",
+    "expected_title": "Drag reduction system",
+    "category": "general",
+    "answerable": true
+  },
+  {
+    "id": "q07",
+    "question": "In which year was Scuderia Ferrari founded, and by whom?",
+    "expected_answer": "In 1929, by Enzo Ferrari.",
+    "expected_title": "Scuderia Ferrari",
+    "category": "team",
+    "answerable": true
+  },
+  {
+    "id": "q08",
+    "question": "Which circuit hosts the Monaco Grand Prix?",
+    "expected_answer": "Circuit de Monaco, a street circuit in Monte Carlo.",
+    "expected_title": "Circuit de Monaco",
+    "category": "circuit",
+    "answerable": true
+  },
+  {
+    "id": "q09",
+    "question": "How long is one lap of the Silverstone Circuit?",
+    "expected_answer": "About 5.891 km (3.660 mi).",
+    "expected_title": "Silverstone Circuit",
+    "category": "circuit",
+    "answerable": true
+  },
+  {
+    "id": "q10",
+    "question": "Which driver won the 2016 World Championship and retired shortly after?",
+    "expected_answer": "Nico Rosberg.",
+    "expected_title": "Nico Rosberg",
+    "category": "driver",
+    "answerable": true
+  },
+  {
+    "id": "q11",
+    "question": "Who founded the McLaren team and in which year?",
+    "expected_answer": "Bruce McLaren, in 1963.",
+    "expected_title": "McLaren",
+    "category": "team",
+    "answerable": true
+  },
+  {
+    "id": "q12",
+    "question": "How did Ayrton Senna die?",
+    "expected_answer": "In a crash at the Tamburello corner during the 1994 San Marino Grand Prix at Imola.",
+    "expected_title": "Ayrton Senna",
+    "category": "driver",
+    "answerable": true
+  },
+  {
+    "id": "q13",
+    "question": "Which team won the 2024 World Constructors' Championship?",
+    "expected_answer": "McLaren.",
+    "expected_title": "2024 Formula One World Championship",
+    "category": "season",
+    "answerable": true
+  },
+  {
+    "id": "q14",
+    "question": "In which year did the Las Vegas Strip Circuit first host a Formula One race?",
+    "expected_answer": "2023.",
+    "expected_title": "Las Vegas Strip Circuit",
+    "category": "circuit",
+    "answerable": true
+  },
+  {
+    "id": "q15",
+    "question": "Which team does Oscar Piastri drive for?",
+    "expected_answer": "McLaren.",
+    "expected_title": "Oscar Piastri",
+    "category": "driver",
+    "answerable": true
+  },
+  {
+    "id": "q16",
+    "question": "What is Lewis Hamilton's favourite food?",
+    "expected_answer": "I don't know based on the available articles.",
+    "expected_title": null,
+    "category": "driver",
+    "answerable": false
+  },
+  {
+    "id": "q17",
+    "question": "How much does a grandstand ticket for the 2026 Monaco Grand Prix cost?",
+    "expected_answer": "I don't know based on the available articles.",
+    "expected_title": null,
+    "category": "circuit",
+    "answerable": false
+  },
+  {
+    "id": "q18",
+    "question": "What is the capital of Australia?",
+    "expected_answer": "I don't know based on the available articles.",
+    "expected_title": null,
+    "category": null,
+    "answerable": false
+  },
+  {
+    "id": "q19",
+    "question": "Who will win the 2030 Formula One World Championship?",
+    "expected_answer": "I don't know based on the available articles.",
+    "expected_title": null,
+    "category": "season",
+    "answerable": false
+  },
+  {
+    "id": "q20",
+    "question": "Who won the 2024 Formula One World Drivers' Championship?",
+    "expected_answer": "Max Verstappen.",
+    "expected_title": "2024 Formula One World Championship",
+    "category": "season",
+    "answerable": true
+  },
+  {
+    "id": "q21",
+    "question": "Which team won the 2025 World Constructors' Championship?",
+    "expected_answer": "McLaren.",
+    "expected_title": "2025 Formula One World Championship",
+    "category": "season",
+    "answerable": true
+  },
+  {
+    "id": "q22",
+    "question": "Who won the first race of the 2025 Formula One season, the Australian Grand Prix?",
+    "expected_answer": "Lando Norris.",
+    "expected_title": "2025 Formula One World Championship",
+    "category": "season",
+    "answerable": true
+  },
+  {
+    "id": "q23",
+    "question": "How many Grands Prix did Max Verstappen win in 2025?",
+    "expected_answer": "Eight.",
+    "expected_title": "2025 Formula One World Championship",
+    "category": "season",
+    "answerable": true
+  },
+  {
+    "id": "q24",
+    "question": "Which driver replaced Lewis Hamilton at Mercedes for the 2025 season?",
+    "expected_answer": "Andrea Kimi Antonelli.",
+    "expected_title": "Andrea Kimi Antonelli",
+    "category": "driver",
+    "answerable": true
+  }
+]

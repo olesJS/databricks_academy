@@ -1,0 +1,77 @@
+name: lab12-rag
+
+on:
+  pull_request:
+    branches: [master, lab-12]
+    paths:
+      - "lab-12-rag-assistant/**"
+      - ".github/workflows/lab12.yml"
+  push:
+    branches: [master]
+    paths:
+      - "lab-12-rag-assistant/**"
+      - ".github/workflows/lab12.yml"
+
+permissions:
+  contents: read
+
+defaults:
+  run:
+    working-directory: lab-12-rag-assistant
+
+jobs:
+  unit-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: pip install pytest
+
+      - name: Unit tests (Lab 12)
+        run: pytest -v
+
+  bundle-validate:
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    timeout-minutes: 10
+    env:
+      DATABRICKS_AUTH_TYPE: pat
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_FREE }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_FREE }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: databricks/setup-cli@main
+
+      - name: Validate bundle
+        run: databricks bundle validate -t dev
+
+  bundle-deploy:
+    if: github.event_name == 'push'
+    runs-on: ubuntu-latest
+    needs: unit-tests
+    timeout-minutes: 30
+    concurrency:
+      group: lab12-dev-deploy
+      cancel-in-progress: false
+    env:
+      DATABRICKS_AUTH_TYPE: pat
+      DATABRICKS_HOST: ${{ secrets.DATABRICKS_HOST_FREE }}
+      DATABRICKS_TOKEN: ${{ secrets.DATABRICKS_TOKEN_FREE }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: databricks/setup-cli@main
+
+      - name: Validate bundle
+        run: databricks bundle validate -t dev
+
+      - name: Deploy bundle
+        run: databricks bundle deploy -t dev
