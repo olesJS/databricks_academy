@@ -39,4 +39,6 @@ targets:
     default: true
     mode: development
     workspace:
-      profile: uni_free
+      # Host instead of profile, so the bundle also works in CI (DATABRICKS_HOST / DATABRICKS_TOKEN env vars).
+      # Locally two profiles match this host, so pick one: --profile uni_free or DATABRICKS_CONFIG_PROFILE=uni_free.
+      host: https://dbc-333f1c3a-ac61.cloud.databricks.com
