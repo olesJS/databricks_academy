@@ -15,12 +15,24 @@ variables:
   silver_schema:
     description: Silver schema (chunks and vector index)
     default: f1_rag_silver
+  gold_schema:
+    description: Gold schema (qa_log, registered agent model, inference tables)
+    default: f1_rag_gold
   raw_volume:
     description: Volume with raw files, inside the bronze schema
     default: raw
   reader_group:
     description: Group granted read access to the chunks table and index
     default: account users
+  agent_model_name:
+    description: Name of the agent model in Unity Catalog, inside the gold schema
+    default: f1_rag_agent
+  agent_model_alias:
+    description: Alias set on the newly registered agent version
+    default: champion
+  agent_model_version:
+    description: Version of the UC agent model served by the endpoint
+    default: "1"
 
 targets:
   dev:

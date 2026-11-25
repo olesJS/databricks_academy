@@ -1,0 +1,15 @@
+# Logs, validates and registers the agent in UC (notebooks/06_log_agent.py).
+# No cluster is specified, so the task runs on serverless compute.
+resources:
+  jobs:
+    f1_rag_register_agent:
+      name: f1_rag_register_agent
+      tasks:
+        - task_key: log_and_register_agent
+          notebook_task:
+            notebook_path: ../notebooks/06_log_agent.py
+            base_parameters:
+              catalog: ${var.catalog}
+              gold_schema: ${var.gold_schema}
+              model_name: ${var.agent_model_name}
+              alias: ${var.agent_model_alias}
