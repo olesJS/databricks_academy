@@ -225,6 +225,5 @@ lab-03-streaming/config.py
 .mcp.json
 .ai-dev-kit/
 .claude/settings.local.json
-.claude/settings.json
 *.bak
 .databricks/
