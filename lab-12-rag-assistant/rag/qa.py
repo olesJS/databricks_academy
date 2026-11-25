@@ -152,7 +152,7 @@ def ask(
     )
 
     result["answer"] = response.choices[0].message.content.strip()
-    result["promp_tokens"] = response.usage.prompt_tokens
+    result["prompt_tokens"] = response.usage.prompt_tokens
     result["completion_tokens"] = response.usage.completion_tokens
     result["latency_ms"] = (time.perf_counter() - started) * 1000
     return result

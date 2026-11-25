@@ -97,6 +97,9 @@ def chunk_section(body: str, max_tokens: int, overlap_tokens: int) -> list[str]:
                     break
                 overlap.insert(0, prev)
                 overlap_size += size
+            # drop overlap sentences until the next unit fits into max_tokens
+            while overlap and overlap_size + unit_tokens > max_tokens:
+                overlap_size -= count_tokens(overlap.pop(0))
             current, current_tokens = overlap, overlap_size
         current.append(unit)
         current_tokens += unit_tokens
