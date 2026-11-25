@@ -12,9 +12,3 @@ resources:
             workload_type: CPU
             workload_size: Small
             scale_to_zero_enabled: true
-      ai_gateway:
-        inference_table_config:
-          enabled: true
-          catalog_name: ${var.catalog}
-          schema_name: ${var.gold_schema}
-          table_name_prefix: f1_rag_agent
