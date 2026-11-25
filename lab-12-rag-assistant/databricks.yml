@@ -1,0 +1,30 @@
+# Bundle for refreshing the F1 RAG knowledge base (ingest -> chunk -> vector index).
+bundle:
+  name: f1_rag_assistant
+
+include:
+  - resources/*.yml
+
+variables:
+  catalog:
+    description: Unity Catalog catalog
+    default: workspace
+  bronze_schema:
+    description: Bronze schema (raw wiki pages)
+    default: f1_rag_bronze
+  silver_schema:
+    description: Silver schema (chunks and vector index)
+    default: f1_rag_silver
+  raw_volume:
+    description: Volume with raw files, inside the bronze schema
+    default: raw
+  reader_group:
+    description: Group granted read access to the chunks table and index
+    default: account users
+
+targets:
+  dev:
+    default: true
+    mode: development
+    workspace:
+      profile: uni_free
